@@ -1,0 +1,289 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.pd3_26.midterm_project;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
+import java.util.Scanner;
+import javax.swing.*;
+
+/**
+ *
+ * @author DELL
+ */
+public class System {
+    private List<Manager> MangList;
+    private List<Employee> EmpList;
+    private List<Request> ReqList;
+    
+    public int SearchEmpEmail (String Email)
+    {
+        int index = 0;
+        for (int i = 0; i < EmpList.size(); i++)
+        {
+            if (EmpList.get(i).getEmail().equals(Email))
+            {
+                index = i;
+                break;
+            }
+        }
+        
+        return index;
+    }
+    
+    public boolean DeleteEmp (String ID)
+    {
+        boolean done = false;
+        for (int i = 0; i < EmpList.size(); i++)
+        {
+            if (EmpList.get(i).getID().equals(ID))
+            {
+                EmpList.remove(i);
+                done = true;
+                break;
+            }
+        }
+        
+        return done;
+    }
+    
+    public boolean DealReq (String Stat, Request Chosen)
+    {
+        boolean done = false;
+        if ( Stat.equals("Accepted") )
+        {
+            Chosen.setStatus(Stat);
+            done = true;
+        }
+        else if ( Stat.equals("Denied") )
+        {
+            Chosen.setStatus(Stat);
+            done = true;
+        }
+        
+        return done;
+    }
+    
+    public boolean RequestObj (String AccType)
+    {
+        boolean done = false;
+        
+        if ( AccType.equals("Manager") )
+        {
+            JOptionPane.showMessageDialog(null, "Your request has been forwarded to management.", "Done", 0);
+        }
+        else if ( AccType.equals("Employee") )
+        {
+            JOptionPane.showMessageDialog(null, "Your request has been forwarded to the managers.", "Done", 0);
+        }
+        
+        return done;
+    }
+    
+    public boolean ViewReqDetails (String AccType, String Area, String ID)
+    {
+        boolean done = false;
+        
+        if ( AccType.equals("Manager") )
+        {
+            
+        }
+        else if ( AccType.equals("Employee") )
+        {
+            
+        }
+        
+        return done;
+    }
+    
+    public boolean ViewProfile (String AccType, String ID)
+    {
+        boolean done = false;
+        
+        if ( AccType.equals("Manager") )
+        {
+            
+        }
+        else if ( AccType.equals("Employee") )
+        {
+            
+        }
+        
+        return done;
+    }
+    
+    public int ViewReqHistory (String ID)
+    {
+        int index = 0;
+        
+        for (int i = 0; i < EmpList.size(); i++)
+        {
+            if ( EmpList.get(i).getID().equals(ID) )
+            {
+                index = i;
+            }
+        }
+        
+        return index;
+    }
+    
+    public boolean AddNewEmp (Employee Newbie)
+    {
+        EmpList.add(Newbie);
+        return true;
+    }
+    
+    public void OrderDataEmp (String Area, String Parameter)
+    {
+        
+    }
+    
+    public void OrderRequests (String Area, String Parameter)
+    {
+        
+    }
+    
+    public void EmpReqCenter (String ID)
+    {
+        
+    }
+    
+    public void ManReqCenter ()
+    {
+        
+    }
+    
+    public void LoadData ()
+    {
+        Scanner Reader;
+        String Data;
+        
+        try {
+            File ManagerF = new File("Managers.txt");
+            Reader = new Scanner(ManagerF);
+            
+            while (Reader.hasNextLine())
+            {
+                Data = Reader.nextLine();
+                
+                String [] MInfo = Data.split(",");
+                
+                Manager Load = new Manager(MInfo[0], MInfo[1]);
+                
+                MangList.add(Load);
+            }
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(null, "File Managers.txt not found", "ERROR", 0);
+        }
+        
+        try {
+            File EmployeeF = new File("Employees.txt");
+            Reader = new Scanner(EmployeeF);
+            
+            while (Reader.hasNextLine())
+            {
+                Data = Reader.nextLine();
+                
+                String [] MInfo = Data.split(",");
+                
+                Employee Load = new Employee();
+                
+                Load.setName(MInfo[0]);
+                Load.setEmail(MInfo[1]);
+                Load.setPassword(MInfo[2]);
+                Load.setContact(MInfo[3]);
+                Load.setID(MInfo[4]);
+                
+                EmpList.add(Load);
+            }
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(null, "File Employees.txt not found", "ERROR", 0);
+        }
+        
+        try {
+            File ReqF = new File("Requests.txt");
+            Reader = new Scanner(ReqF);
+            
+            while (Reader.hasNextLine())
+            {
+                Data = Reader.nextLine();
+                
+                String [] MInfo = Data.split(";");
+                String [] TData = MInfo[1].split(",");
+                
+                
+                Request Load = new Request(MInfo[0], MInfo[1]);
+                
+                for (int i = 0; i < EmpList.size(); i++)
+                {
+                    if ( EmpList.get(i).getID().equals(TData[3]) )
+                    {
+                        EmpList.get(i).addReq(Load);
+                    }
+                    
+                    ReqList.add(Load);
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(null, "File Employees.txt not found", "ERROR", 0);
+        }
+    }
+    
+    public void SaveData ()
+    {
+        FileWriter Writer;
+        
+        try {
+            Writer = new FileWriter("Managers.txt");
+            for (int i = 0; i < MangList.size(); i++)
+            {
+                Writer.write(MangList.get(i).getEmail() + "," + MangList.get(i).getPassword());
+                Writer.write("\n");
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Unexpected error ocurred during saving.", "ERROR", 0);
+        }
+        
+        try {
+            Writer = new FileWriter("Employees.txt");
+            for (int i = 0; i < EmpList.size(); i++)
+            {
+                Writer.write(EmpList.get(i).getName() + "," + EmpList.get(i).getEmail() + ","
+                           + EmpList.get(i).getPassword() + "," + EmpList.get(i).getContact() + ","
+                           + EmpList.get(i).getID());
+                Writer.write("\n");
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Unexpected error ocurred during saving.", "ERROR", 0);
+        }
+        
+        try {
+            Writer = new FileWriter("Requests.txt");
+            for (int i = 0; i < ReqList.size(); i++)
+            {
+                Writer.write(ReqList.get(i).WriteObjectList() + ";" + ReqList.get(i).getReason() + ","
+                           + ReqList.get(i).getStatus() + "," + ReqList.get(i).getTime() + ","
+                           + ReqList.get(i).getID());
+                Writer.write("\n");
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Unexpected error ocurred during saving.", "ERROR", 0);
+        }
+    }
+    
+    private static System instance;
+    public static System GetInstance ()
+    {
+        if (instance == null)
+        {
+            instance = new System();
+        }
+        return instance;
+    }
+}
